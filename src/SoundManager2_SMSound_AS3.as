@@ -196,16 +196,37 @@ package {
           ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Stream not found!');
           break;
 
+        // This is triggered when the sound loses the connection with the server.  In some cases
+        // one could just try to reconnect to the server and resume playback.  However for
+        // streams protected by expiring tokens, I don't think that will work.
         case "NetConnection.Connect.Closed":
           this.failed = true;
           writeDebug("NetConnection: Connection closed!");
           ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Connection closed!');
           break;
 
+        // Couldn't establish a connection with the server. Attempts to connect to the server
+        // can also fail if the permissible number of socket connections on either the client
+        // or the server computer is at its limit.
+        case "NetConnection.Connect.Failed":
+          this.failed = true;
+          writeDebug("NetConnection: Connection failed! Lost internet connection? Try again...");
+          ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Connection failed!');
+          this.ns.pause();
+          break;
+
+        // A change has occurred to the network status.  This could mean that the network
+        // connection is back, or it could mean that it has been lost.
+        case "NetConnection.Connect.NetworkChange":
+          this.failed = true;
+          writeDebug("NetConnection: Network change!");
+          ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Network changed');
+          break;
+
         default:
           this.failed = true;
           writeDebug("NetConnection: got unhandled code '" + event.info.code + "'!");
-          ExternalInterface.call(this.sm.baseJSObject + "['" + this.sID + "']._onconnect", 0);
+          ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure");
           break;
       }
     }
