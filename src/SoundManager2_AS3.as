@@ -42,6 +42,7 @@ package {
   import flash.utils.clearInterval;
   import flash.utils.Dictionary;
   import flash.utils.Timer;
+  import flash.utils.getTimer;
   import flash.xml.XMLDocument;
   import flash.xml.XMLNode;
 
@@ -666,6 +667,12 @@ package {
         this.onLoadError(oSound);
       } else if (e.info.code == "NetStream.Play.Start" || e.info.code == "NetStream.Buffer.Empty" || e.info.code == "NetStream.Buffer.Full") {
 
+        // First time buffer has filled.  Print debugging output.
+        if (!oSound.PLAY_TIME) {
+          oSound.PLAY_TIME = getTimer();
+          writeDebug('time to connect: '+Math.round(oSound.CONNECT_TIME - oSound.START_TIME)+'ms Time to play: '+ Math.round(oSound.PLAY_TIME - oSound.CONNECT_TIME) +'ms (since connecting).');
+        }
+
         // RTMP case..
         // We wait for the buffer to fill up before pausing the just-loaded song because only if the
         // buffer is full will the song continue to buffer until the user hits play.
@@ -681,8 +688,9 @@ package {
         }
 
         // Increase the size of the buffer
-        // We are experiencing false starts which seem to be caused by the double
-        // buffering.  Commenting out.
+        // We are experiencing false starts which we thought may be caused by the double
+        // buffering.  However, after commenting it out, the problem persists, so
+        // it doesn't appear to be related to the buffering after all.
         //if (e.info.code == "NetStream.Buffer.Full") {
         //  if (oSound.ns.bufferTime == oSound.bufferTime) {
         //    oSound.ns.bufferTime = 15;

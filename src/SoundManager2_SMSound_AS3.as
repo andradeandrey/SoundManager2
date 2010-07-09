@@ -27,6 +27,7 @@ package {
   import flash.media.Video;
   import flash.net.URLRequest;
   import flash.utils.ByteArray;
+  import flash.utils.getTimer;
   import flash.net.NetConnection;
   import flash.net.NetStream;
 
@@ -94,6 +95,9 @@ package {
     public var oVideo: Video = null;
     public var videoWidth: Number = 0;
     public var videoHeight: Number = 0;
+    public var START_TIME: Number;
+    public var CONNECT_TIME: Number;
+    public var PLAY_TIME: Number;
 
     public function SoundManager2_SMSound_AS3(oSoundManager: SoundManager2_AS3, sIDArg: String = null, sURLArg: String = null, usePeakData: Boolean = false, useWaveformData: Boolean = false, useEQData: Boolean = false, useNetstreamArg: Boolean = false, useVideoArg: Boolean = false, netStreamBufferTime: Number = 1, serverUrl: String = null, duration: Number = 0, totalBytes: Number = 0, autoPlay: Boolean = false, useEvents: Boolean = false) {
       this.sm = oSoundManager;
@@ -123,6 +127,7 @@ package {
       }
       setAutoPlay(autoPlay);
 
+      this.START_TIME = getTimer();
       writeDebug('SoundManager2_SMSound_AS3: Got duration: '+duration+', totalBytes: '+totalBytes+', autoPlay: '+autoPlay);
 
       if (this.useNetstream) {
@@ -145,6 +150,7 @@ package {
         }
         this.nc.connect(serverUrl);
       } else {
+        this.CONNECT_TIME = this.START_TIME;
         this.connected = true;
       }
 
@@ -183,6 +189,9 @@ package {
               this.oVideo.height = this.sm.stage.stageHeight;
             }
             this.connected = true;
+            this.CONNECT_TIME = getTimer();
+            writeDebug('connected in '+ Math.round(this.CONNECT_TIME - this.START_TIME) + ' ms');
+
             if (this.useEvents) {
               writeDebug('firing _onconnect for '+this.sID);
               ExternalInterface.call(this.sm.baseJSObject + "['" + this.sID + "']._onconnect", 1);
@@ -196,23 +205,49 @@ package {
 
         case "NetStream.Play.StreamNotFound":
           this.failed = true;
-          writeDebug("NetConnection: Stream not found!");
+          writeDebug("NetConnection: Stream not found! Description: " + event.info.description);
           ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Stream not found!');
           break;
 
+        // This is triggered when the sound loses the connection with the server.  In some cases
+        // one could just try to reconnect to the server and resume playback.  However for
+        // streams protected by expiring tokens, I don't think that will work.
         case "NetConnection.Connect.Closed":
           this.failed = true;
-          writeDebug("NetConnection: Connection closed!");
+          writeDebug("NetConnection: Connection closed! Description: " + event.info.description);
           ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Connection closed!');
           break;
 
+        // Couldn't establish a connection with the server. Attempts to connect to the server
+        // can also fail if the permissible number of socket connections on either the client
+        // or the server computer is at its limit.  This also happens when the internet
+        // connection is lost.
+        case "NetConnection.Connect.Failed":
+          this.failed = true;
+          writeDebug("NetConnection: Connection failed! Lost internet connection? Try again... Description: " + event.info.description);
+          ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Connection failed!');
+          break;
+
+        // A change has occurred to the network status.  This could mean that the network
+        // connection is back, or it could mean that it has been lost...just try to resume
+        // playback.
+
+        // KJV: Can't use this yet because by the time you get your connection back the
+        // song has reached it's maximum retries, so it doesn't retry again.  We need
+        // a new _ondisconnect handler.
+        //case "NetConnection.Connect.NetworkChange":
+        //  this.failed = true;
+        //  writeDebug("NetConnection: Network connection status changed");
+        //  ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure", 'Reconnecting...');
+        //  break;
+
+        // Consider everything else a failure...
         default:
           this.failed = true;
-          writeDebug("NetConnection: got unhandled code '" + event.info.code + "'!");
-          ExternalInterface.call(this.sm.baseJSObject + "['" + this.sID + "']._onconnect", 0);
+          writeDebug("NetConnection: got unhandled code '" + event.info.code + "'! Description: " + event.info.description);
+          ExternalInterface.call(baseJSObject + "['" + this.sID + "']._onfailure");
           break;
       }
-
     }
 
     public function resizeHandler(e: Event) : void {
