@@ -145,6 +145,12 @@
  <arg line='-c "/Applications/flexsdk/bin/mxmlc -use-network=false -optimize=true -o swf/soundmanager2_flash9_debug.swf -file-specs src/SoundManager2_AS3.as"'/>
 </exec>
 
+<echo>Building debug version, Flash 10/AS3...</echo>
+
+<exec executable="/bin/sh">
+ <arg line='-c "/Applications/flexsdk/bin/mxmlc -target-player=10.0.0 -use-network=false -optimize=true -o swf/soundmanager2_flash10_debug.swf -file-specs src/SoundManager2_AS3.as"'/>
+</exec>
+
 <echo>Making no-debug .AS...</echo>
 
 <exec executable="/bin/sh">
@@ -265,6 +271,10 @@
  <arg line='-c "/Applications/flexsdk/bin/mxmlc -use-network=false -optimize=true -o swf/soundmanager2_flash9.swf -file-specs src/soundmanager2_flash_nodebug/SoundManager2_AS3.as"'/>
 </exec>
 
+<exec executable="/bin/sh">
+ <arg line='-c "/Applications/flexsdk/bin/mxmlc -target-player=10.0.0 -use-network=false -optimize=true -o swf/soundmanager2_flash10.swf -file-specs src/soundmanager2_flash_nodebug/SoundManager2_AS3.as"'/>
+</exec>
+
 <echo>Building debug cross-domain SWFs...</echo>
 
 <exec executable="/bin/sh">
@@ -275,6 +285,10 @@
  <arg line='-c "/Applications/flexsdk/bin/mxmlc -use-network=false -optimize=true -o src/soundmanager2_flash_xdomain/soundmanager2_flash9_debug.swf -file-specs src/soundmanager2_flash_xdomain/SoundManager2_AS3.as"'/>
 </exec>
 
+<exec executable="/bin/sh">
+ <arg line='-c "/Applications/flexsdk/bin/mxmlc -target-player=10.0.0 -use-network=false -optimize=true -o src/soundmanager2_flash_xdomain/soundmanager2_flash10_debug.swf -file-specs src/soundmanager2_flash_xdomain/SoundManager2_AS3.as"'/>
+</exec>
+
 <echo>Building no-debug cross-domain SWFs...</echo>
 
 <exec executable="/bin/sh">
@@ -283,6 +297,10 @@
 
 <exec executable="/bin/sh">
  <arg line='-c "/Applications/flexsdk/bin/mxmlc -use-network=false -optimize=true -o src/soundmanager2_flash_xdomain/soundmanager2_flash9.swf -file-specs src/soundmanager2_flash_xdomain/nodebug/SoundManager2_AS3.as"'/>
+</exec>
+
+<exec executable="/bin/sh">
+ <arg line='-c "/Applications/flexsdk/bin/mxmlc -target-player=10.0.0 -use-network=false -optimize=true -o src/soundmanager2_flash_xdomain/soundmanager2_flash10.swf -file-specs src/soundmanager2_flash_xdomain/nodebug/SoundManager2_AS3.as"'/>
 </exec>
 
 <!-- remove temporary file(s) -->
