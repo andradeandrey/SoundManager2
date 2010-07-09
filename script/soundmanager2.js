@@ -104,10 +104,7 @@ function SoundManager(smURL, smID) {
     'bufferTime': 3,        // seconds of data to buffer before playback begins (null = flash default of 0.1 seconds - if AAC playback is gappy, try increasing.)
     'serverURL': null,      // rtmp: FMS or FMIS server to connect to, required when requesting media via RTMP or one of its variants
     'onconnect': null       // rtmp: callback for connection to flash media server
-/*
     'duration': null,       // rtmp: song duration (msec)
-    'totalbytes': null      // rtmp: byte size of the song
-*/
   };
 
   this.version = null;
