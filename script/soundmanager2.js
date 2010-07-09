@@ -46,7 +46,7 @@ function SoundManager(smURL, smID) {
     'mp3': {
       type: ['audio/mpeg; codecs="mp3"','audio/mpeg','audio/mp3','audio/MPA','audio/mpa-robust'],
       required: true
-    }, 
+    },
     'mp4': {
       related: ['aac','m4a'], // additional formats under the MP4 container.
       type: ['audio/mp4; codecs="mp4a.40.2"','audio/aac','audio/x-m4a','audio/MP4A-LATM','audio/mpeg4-generic'],
@@ -104,7 +104,6 @@ function SoundManager(smURL, smID) {
     'bufferTime': 3,        // seconds of data to buffer before playback begins (null = flash default of 0.1 seconds - if AAC playback is gappy, try increasing.)
     'serverURL': null,      // rtmp: FMS or FMIS server to connect to, required when requesting media via RTMP or one of its variants
     'onconnect': null       // rtmp: callback for connection to flash media server
-    'duration': null,       // rtmp: song duration (msec)
   };
 
   this.version = null;
@@ -176,7 +175,7 @@ function SoundManager(smURL, smID) {
     // mp3: boolean
     // mp4: boolean
     usingFlash: null // set if/when flash fallback is needed
-  }; 
+  };
   this.ignoreFlash = false; // used for special cases (eg. iPad/iPhone/palm OS?)
 
   // --- private SM2 internals ---
@@ -308,7 +307,7 @@ function SoundManager(smURL, smID) {
           }
         }
       }
-    } 
+    }
 
     if (_tO.autoLoad || _tO.autoPlay) {
       if (oSound) {
@@ -1301,7 +1300,7 @@ function SoundManager(smURL, smID) {
       try {
         sm2Debugger.handleEvent(sEventType, bSuccess, sMessage);
       } catch(e) {
-        // oh well  
+        // oh well
       }
     }
   };
@@ -1802,7 +1801,7 @@ function SoundManager(smURL, smID) {
     // --- public methods ---
 
     this.id3 = {
-      /* 
+      /*
         Name/value pairs eg. this.id3.songname set via Flash when available - download docs for reference
         http://livedocs.macromedia.com/flash/8/
       */
@@ -1918,7 +1917,7 @@ function SoundManager(smURL, smID) {
             _a = null;
             // delete _t._audio;
           }
-        } 
+        }
         // reset load/status flags
         _resetProperties();
       }
@@ -2201,7 +2200,7 @@ function SoundManager(smURL, smID) {
         _s.o._setVolume(_t.sID, (_s.muted && !_t.muted) || _t.muted?0:nVol);
       } else if (_a) {
         _a.volume = nVol/100;
-      } 
+      }
       _t._iO.volume = nVol;
       if (!bInstanceOnly) {
         _t.volume = nVol;
@@ -2720,7 +2719,7 @@ function SoundManager(smURL, smID) {
 
 
   // register a few event handlers
-  
+
   if (!_s.hasHTML5 || _needsFlash) {
     // only applies to Flash mode.
     if (window.addEventListener) {
