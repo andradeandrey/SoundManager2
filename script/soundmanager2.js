@@ -1928,8 +1928,8 @@ function SoundManager(smURL, smID) {
       _s._wD('SMSound.destruct(): "' + _t.sID + '"');
       if (!_t.isHTML5) {
         // kill sound within Flash
-        // Disable the onfailure handler
-        _t._iO.onfailure = null;
+        // Disable all callbacks while the sound is being destroyed
+        _t._iO = {};
         _s.o._destroySound(_t.sID);
       } else {
         _stop_html5_timer();
